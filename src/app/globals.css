@@ -2,13 +2,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030303;
+  /* Background: clean cinematic dark tone */
+  --background: #050505;
   --foreground: #f9fafb;
-  --emerald: #10b981;
-  --emerald-light: #34d399;
+  /* Modern monochrome palette */
+  --emerald: #ffffff;
+  --emerald-light: #f4f4f5;
   --surface: rgba(255, 255, 255, 0.03);
   --border: rgba(255, 255, 255, 0.08);
   --text-muted: rgba(255, 255, 255, 0.5);
+  /* Premium easing — expo out */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
@@ -17,6 +22,19 @@
   --color-emerald: var(--emerald);
   --color-emerald-light: var(--emerald-light);
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* ── Override the entire Tailwind emerald palette with modern monochrome / zinc ── */
+  --color-emerald-50: #ffffff;
+  --color-emerald-100: #fafafa;
+  --color-emerald-200: #f4f4f5;
+  --color-emerald-300: #e4e4e7;
+  --color-emerald-400: #d4d4d8;
+  --color-emerald-500: #ffffff;
+  /* primary brand color */
+  --color-emerald-600: #a1a1aa;
+  --color-emerald-700: #71717a;
+  --color-emerald-800: #52525b;
+  --color-emerald-900: #3f3f46;
 }
 
 * {
@@ -24,7 +42,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Let Lenis handle scroll — disable native smooth behaviour */
+  scroll-behavior: auto;
 }
 
 body {
@@ -38,21 +57,187 @@ body {
 
 .glass {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.glass-strong {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(64px) saturate(180%);
+  -webkit-backdrop-filter: blur(64px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* GPU promotion for scroll-animated elements */
+.will-transform {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Soft modern glow text */
 .text-emerald-glow {
-  color: #10b981;
-  text-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.1);
 }
 
 ::selection {
-  background: rgba(16, 185, 129, 0.3);
-  color: #f9fafb;
+  background: rgba(255, 255, 255, 0.2);
+  color: #000000;
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #030303; }
-::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 2px; }
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+/* ── Cinematic utilities ── */
+
+.tilt-card {
+  transform-style: preserve-3d;
+  perspective: 800px;
+  will-change: transform;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.35;
+  }
+
+  85% {
+    opacity: 0.35;
+  }
+
+  100% {
+    transform: translateY(300%);
+    opacity: 0;
+  }
+}
+
+.scanline-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      transparent 40%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 60%);
+  animation: scanline 1.8s ease-out forwards;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes unredact {
+  from {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: transparent;
+  }
+
+  to {
+    background-color: transparent;
+    color: inherit;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% center;
+  }
+
+  to {
+    background-position: 200% center;
+  }
+}
+
+.progress-shimmer {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(255, 255, 255, 0.8) 50%,
+      rgba(255, 255, 255, 0.2) 100%);
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes energy-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+  }
+
+  70% {
+    box-shadow: 0 0 0 16px rgba(255, 255, 255, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.energy-pulse {
+  animation: energy-ring 2s ease-out infinite;
+}
+
+@keyframes transmission {
+
+  0%,
+  100% {
+    opacity: 0.03;
+  }
+
+  50% {
+    opacity: 0.06;
+  }
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-120px) translateX(var(--drift, 20px));
+    opacity: 0;
+  }
+}
+
+.ember {
+  animation: floatUp var(--duration, 4s) ease-in-out var(--delay, 0s) infinite;
+}

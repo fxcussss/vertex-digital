@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, FileText } from "lucide-react";
 
 const faqs = [
   {
@@ -44,37 +44,50 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
-      className="border-b border-white/[0.06] last:border-0"
+      transition={{ duration: 0.6, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      className="border-b border-white/[0.05] last:border-0"
     >
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between gap-4 py-5 text-left group"
       >
-        <span className="text-sm md:text-base font-semibold text-white/80 group-hover:text-white transition-colors leading-snug">
-          {q}
-        </span>
-        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10 transition-all">
+        <div className="flex items-center gap-3">
+          {/* File icon — classified aesthetic */}
+          <FileText className={`w-3.5 h-3.5 flex-shrink-0 transition-colors duration-200 ${open ? "text-emerald-400" : "text-white/20 group-hover:text-white/40"}`} />
+          <span className={`text-sm md:text-base font-semibold leading-snug transition-colors duration-200 ${open ? "text-white" : "text-white/70 group-hover:text-white"}`}>
+            {q}
+          </span>
+        </div>
+        <div className={`flex-shrink-0 w-7 h-7 rounded-full border flex items-center justify-center transition-all duration-300 ${open
+            ? "bg-emerald-500/15 border-emerald-500/40"
+            : "bg-white/[0.03] border-white/[0.07] group-hover:border-emerald-500/25 group-hover:bg-emerald-500/08"
+          }`}>
           {open
             ? <Minus className="w-3.5 h-3.5 text-emerald-400" />
-            : <Plus className="w-3.5 h-3.5 text-white/50 group-hover:text-emerald-400 transition-colors" />
+            : <Plus className="w-3.5 h-3.5 text-white/40 group-hover:text-emerald-400 transition-colors" />
           }
         </div>
       </button>
+
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
             key="answer"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ height: 0, opacity: 0, filter: "blur(4px)" }}
+            animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
+            exit={{ height: 0, opacity: 0, filter: "blur(4px)" }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <p className="pb-5 text-sm text-white/45 leading-relaxed">{a}</p>
+            <div className="pl-6 pb-5">
+              {/* "Unredacted" — accent line left */}
+              <div className="border-l-2 border-emerald-500/30 pl-4">
+                <p className="text-sm text-white/45 leading-relaxed">{a}</p>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -84,7 +97,7 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
 
 export default function FAQ() {
   const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
     <section ref={ref} className="relative z-10 py-32 px-4">
@@ -92,16 +105,16 @@ export default function FAQ() {
         {/* Header */}
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
+          initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
+          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-4">FAQ</p>
+          <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ Intelligence Files ◆</p>
           <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-5">
             Questions we get{" "}
             <span className="text-emerald-glow">all the time</span>
           </h2>
-          <p className="text-white/45 text-lg">
+          <p className="text-white/40 text-lg">
             Can't find your answer?{" "}
             <a href="#contact" className="text-emerald-400 hover:underline">
               Just ask us directly →
@@ -109,13 +122,24 @@ export default function FAQ() {
           </p>
         </motion.div>
 
-        {/* FAQ list */}
+        {/* FAQ List — "classified document" */}
         <motion.div
-          className="glass rounded-3xl px-6 md:px-10 py-2"
+          className="glass rounded-3xl px-6 md:px-10 py-2 border border-white/[0.06] relative overflow-hidden"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.15 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
         >
+          {/* Document top stamp */}
+          <div className="flex items-center justify-between py-4 mb-2 border-b border-white/[0.04]">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500/40" />
+              <span className="text-[10px] font-black tracking-[0.3em] text-white/15 uppercase">
+                File: VD-FAQ-001
+              </span>
+            </div>
+            <span className="text-[10px] font-bold tracking-widest text-emerald-500/30 uppercase">Declassified</span>
+          </div>
+
           {faqs.map((faq, i) => (
             <FAQItem key={faq.q} q={faq.q} a={faq.a} index={i} />
           ))}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView, Variants } from "framer-motion";
+import { useRef, useCallback } from "react";
+import { motion, useInView, useMotionValue, useSpring, Variants } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 
 const testimonials = [
@@ -49,84 +49,121 @@ const testimonials = [
   },
 ];
 
-const containerVariants: Variants = {
+const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.09 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-};
+function TestimonialCard({ t, index }: { t: typeof testimonials[0]; index: number }) {
+  const rotateX = useSpring(useMotionValue(0), { stiffness: 200, damping: 25 });
+  const rotateY = useSpring(useMotionValue(0), { stiffness: 200, damping: 25 });
+
+  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    rotateX.set(-(e.clientY - cy) / (rect.height / 2) * 6);
+    rotateY.set((e.clientX - cx) / (rect.width / 2) * 6);
+  }, [rotateX, rotateY]);
+
+  const onMouseLeave = useCallback(() => {
+    rotateX.set(0);
+    rotateY.set(0);
+  }, [rotateX, rotateY]);
+
+  const cardVariant: Variants = {
+    hidden: {
+      opacity: 0,
+      y: 60,
+      scale: 0.85,
+      filter: "blur(12px)",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.08 },
+    },
+  };
+
+  return (
+    <motion.div
+      variants={cardVariant}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: "1000px" }}
+      className="group glass rounded-3xl p-7 flex flex-col gap-5 relative overflow-hidden border border-white/[0.05] hover:border-emerald-500/20 transition-colors duration-500"
+    >
+      {/* Spotlight effect */}
+      <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-radial-[at_50%_0%] from-emerald-500/[0.08] to-transparent pointer-events-none" />
+
+      <Quote className="absolute top-5 right-5 w-8 h-8 text-emerald-500/10 group-hover:text-emerald-500/25 transition-colors duration-300" />
+
+      {/* Stars */}
+      <div className="flex gap-1">
+        {[...Array(t.rating)].map((_, i) => (
+          <Star key={i} className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
+        ))}
+      </div>
+
+      {/* Text */}
+      <p className="text-sm text-white/55 leading-relaxed flex-1 group-hover:text-white/70 transition-colors duration-300">
+        "{t.text}"
+      </p>
+
+      {/* Author */}
+      <div className="flex items-center gap-3 pt-2 border-t border-white/[0.05]">
+        <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-xs font-bold text-emerald-400 flex-shrink-0 group-hover:bg-emerald-500/30 transition-colors">
+          {t.avatar}
+        </div>
+        <div>
+          <p className="text-sm font-bold text-white tracking-tight">{t.name}</p>
+          <p className="text-xs text-white/30">{t.role}</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function Testimonials() {
   const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <section ref={ref} className="relative z-10 py-32 px-4">
+    <section id="testimonials" ref={ref} className="relative z-10 py-32 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           className="text-center mb-20"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
+          initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
+          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-4">Social Proof</p>
+          <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ The Legends ◆</p>
           <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-5">
             Trusted by <span className="text-emerald-glow">ambitious teams</span>
           </h2>
-          <p className="text-white/45 text-lg max-w-xl mx-auto text-balance">
+          <p className="text-white/40 text-lg max-w-xl mx-auto">
             Don't take our word for it. Here's what our clients say after working with us.
           </p>
-          {/* Stars */}
-          <div className="flex items-center justify-center gap-1 mt-5">
+          <div className="flex items-center justify-center gap-1 mt-6">
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-5 h-5 text-emerald-400 fill-emerald-400" />
             ))}
-            <span className="ml-2 text-sm text-white/40 font-medium">5.0 · 120+ reviews</span>
+            <span className="ml-2 text-sm text-white/35 font-medium">5.0 · 120+ reviews</span>
           </div>
         </motion.div>
 
         {/* Grid */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-          variants={containerVariants}
+          variants={stagger}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
-          {testimonials.map((t) => (
-            <motion.div
-              key={t.name}
-              variants={cardVariants}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className="group glass rounded-3xl p-7 flex flex-col gap-5 relative overflow-hidden"
-            >
-              {/* Quote icon */}
-              <Quote className="absolute top-5 right-5 w-8 h-8 text-emerald-500/10 group-hover:text-emerald-500/20 transition-colors" />
-
-              {/* Stars */}
-              <div className="flex gap-1">
-                {[...Array(t.rating)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
-                ))}
-              </div>
-
-              {/* Text */}
-              <p className="text-sm text-white/60 leading-relaxed flex-1">"{t.text}"</p>
-
-              {/* Author */}
-              <div className="flex items-center gap-3 pt-2 border-t border-white/[0.06]">
-                <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-xs font-bold text-emerald-400 flex-shrink-0">
-                  {t.avatar}
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-white tracking-tight">{t.name}</p>
-                  <p className="text-xs text-white/35">{t.role}</p>
-                </div>
-              </div>
-            </motion.div>
+          {testimonials.map((t, i) => (
+            <TestimonialCard key={t.name} t={t} index={i} />
           ))}
         </motion.div>
       </div>

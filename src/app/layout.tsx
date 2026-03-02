@@ -32,6 +32,8 @@ export const metadata: Metadata = {
   },
 };
 
+import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+
 export default function RootLayout({
   children,
 }: {
@@ -39,7 +41,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark overflow-x-hidden">
-      <body className="antialiased overflow-x-hidden">{children}</body>
+      <body className="antialiased overflow-x-hidden">
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+      </body>
     </html>
   );
 }
