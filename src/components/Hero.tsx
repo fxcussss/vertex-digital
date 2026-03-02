@@ -82,7 +82,7 @@ export default function Hero() {
         className="mb-8 inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-4 py-1.5 text-xs text-emerald-400 font-semibold uppercase tracking-widest backdrop-blur-sm"
       >
         <Sparkles className="w-3.5 h-3.5" />
-        Premium Digital Agency · vertexdigital.com
+        Premium Digital Agency · vertex-digital.vercel.app
       </motion.div>
 
       {/* Kinetic headline */}

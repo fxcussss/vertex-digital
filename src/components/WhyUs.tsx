@@ -75,7 +75,7 @@ export default function WhyUs() {
             </h2>
             <p className="text-white/45 text-lg text-balance leading-relaxed mb-10">
               We're a boutique team of designers, engineers, and strategists. Small enough to care deeply —
-              experienced enough to deliver world-class work at vertexdigital.com scale.
+              experienced enough to deliver world-class work on a global scale.
             </p>
             <div className="inline-flex items-baseline gap-3 glass rounded-2xl px-8 py-5">
               <span className="text-5xl font-black text-emerald-400 tracking-tighter">3×</span>
