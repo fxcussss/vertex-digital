@@ -72,12 +72,12 @@ export default function Footer() {
               ))}
               <li>
                 <a
-                  href="https://vertex-digital.vercel.app"
+                  href="https://vertex-digital-sooty.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-white/45 hover:text-emerald-400 transition-colors duration-200"
                 >
-                  vertex-digital.vercel.app ↗
+                  vertex-digital-sooty.vercel.app ↗
                 </a>
               </li>
             </ul>
@@ -133,10 +133,10 @@ export default function Footer() {
             <span className="text-xs text-white/20">Crafted with ❤️ in Mauritius</span>
             <span className="text-white/10">·</span>
             <a
-              href="https://vertex-digital.vercel.app"
+              href="https://vertex-digital-sooty.vercel.app"
               className="text-xs text-white/20 hover:text-emerald-400 transition-colors"
             >
-              vertex-digital.vercel.app
+              vertex-digital-sooty.vercel.app
             </a>
           </div>
         </div>

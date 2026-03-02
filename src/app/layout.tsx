@@ -13,11 +13,11 @@ export const metadata: Metadata = {
   description:
     "Vertex Digital is a premium digital agency crafting high-performance websites, brand identities, and growth-driven digital experiences for ambitious businesses worldwide.",
   keywords: ["digital agency", "web design", "Next.js", "branding", "SEO", "Mauritius"],
-  metadataBase: new URL("https://vertex-digital.vercel.app"),
+  metadataBase: new URL("https://vertex-digital-sooty.vercel.app"),
   openGraph: {
     title: "Vertex Digital — We build digital experiences that perform.",
     description: "Premium web design, branding & growth for ambitious businesses.",
-    url: "https://vertex-digital.vercel.app",
+    url: "https://vertex-digital-sooty.vercel.app",
     siteName: "Vertex Digital",
     locale: "en_US",
     type: "website",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description: "We build digital experiences that perform.",
   },
   alternates: {
-    canonical: "https://vertex-digital.vercel.app",
+    canonical: "https://vertex-digital-sooty.vercel.app",
   },
 };
 
