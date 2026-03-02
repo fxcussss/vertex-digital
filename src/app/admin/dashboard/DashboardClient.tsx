@@ -26,7 +26,7 @@ const STATUS_STYLES = {
 };
 
 function StatCard({ label, value, icon: Icon, color }: {
-  label: string; value: number; icon: React.ElementType; color: string;
+  label: string; value: number; icon: any; color: string;
 }) {
   return (
     <div className="glass rounded-2xl p-5 flex items-center gap-4">
@@ -126,11 +126,10 @@ export default function DashboardClient({ submissions: initial }: { submissions:
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold capitalize transition-all ${
-                filter === f
-                  ? "bg-emerald-500 text-black"
-                  : "glass text-white/50 hover:text-white border border-white/[0.08]"
-              }`}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold capitalize transition-all ${filter === f
+                ? "bg-emerald-500 text-black"
+                : "glass text-white/50 hover:text-white border border-white/[0.08]"
+                }`}
             >
               {f} ({counts[f]})
             </button>
@@ -319,9 +318,8 @@ export default function DashboardClient({ submissions: initial }: { submissions:
                         key={s}
                         onClick={() => handleStatus(selected.id, s)}
                         disabled={selected.status === s || isPending}
-                        className={`py-2 rounded-xl text-xs font-bold capitalize transition-all disabled:opacity-40 ${
-                          selected.status === s ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "glass text-white/50 hover:text-white"
-                        }`}
+                        className={`py-2 rounded-xl text-xs font-bold capitalize transition-all disabled:opacity-40 ${selected.status === s ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "glass text-white/50 hover:text-white"
+                          }`}
                       >
                         {s}
                       </button>

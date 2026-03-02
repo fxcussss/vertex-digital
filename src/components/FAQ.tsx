@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
 import { Plus, Minus, FileText } from "lucide-react";
 
 const faqs = [
@@ -56,18 +56,18 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
       >
         <div className="flex items-center gap-3">
           {/* File icon — classified aesthetic */}
-          <FileText className={`w-3.5 h-3.5 flex-shrink-0 transition-colors duration-200 ${open ? "text-emerald-400" : "text-white/20 group-hover:text-white/40"}`} />
+          <FileText className={`w-3.5 h-3.5 flex-shrink-0 transition-colors duration-200 ${open ? "text-white" : "text-white/20 group-hover:text-white/40"}`} />
           <span className={`text-sm md:text-base font-semibold leading-snug transition-colors duration-200 ${open ? "text-white" : "text-white/70 group-hover:text-white"}`}>
             {q}
           </span>
         </div>
         <div className={`flex-shrink-0 w-7 h-7 rounded-full border flex items-center justify-center transition-all duration-300 ${open
-            ? "bg-emerald-500/15 border-emerald-500/40"
-            : "bg-white/[0.03] border-white/[0.07] group-hover:border-emerald-500/25 group-hover:bg-emerald-500/08"
+          ? "bg-white/15 border-white/40"
+          : "bg-white/[0.03] border-white/[0.07] group-hover:border-white/25 group-hover:bg-white/10"
           }`}>
           {open
-            ? <Minus className="w-3.5 h-3.5 text-emerald-400" />
-            : <Plus className="w-3.5 h-3.5 text-white/40 group-hover:text-emerald-400 transition-colors" />
+            ? <Minus className="w-3.5 h-3.5 text-white" />
+            : <Plus className="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-colors" />
           }
         </div>
       </button>
@@ -84,7 +84,7 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
           >
             <div className="pl-6 pb-5">
               {/* "Unredacted" — accent line left */}
-              <div className="border-l-2 border-emerald-500/30 pl-4">
+              <div className="border-l-2 border-white/30 pl-4">
                 <p className="text-sm text-white/45 leading-relaxed">{a}</p>
               </div>
             </div>
@@ -99,8 +99,26 @@ export default function FAQ() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
+  // 3D Scroll Warp
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const opacity = useTransform(scrollYProgress, [0.65, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0.65, 1], [1, 0.8]);
+  const rotateX = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, 30]), { stiffness: 60, damping: 20 });
+  const z = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, -400]), { stiffness: 60, damping: 20 });
+
   return (
-    <section ref={ref} className="relative z-10 py-32 px-4">
+    <motion.section
+      ref={ref}
+      className="relative z-10 py-32 px-4 overflow-hidden"
+      style={{
+        opacity,
+        scale,
+        rotateX,
+        z,
+        transformPerspective: 1200,
+        transformStyle: "preserve-3d"
+      }}
+    >
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <motion.div
@@ -109,14 +127,14 @@ export default function FAQ() {
           animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ Intelligence Files ◆</p>
+          <p className="text-white/60 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ Intelligence Files ◆</p>
           <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-5">
             Questions we get{" "}
             <span className="text-emerald-glow">all the time</span>
           </h2>
           <p className="text-white/40 text-lg">
-            Can't find your answer?{" "}
-            <a href="#contact" className="text-emerald-400 hover:underline">
+            Can&apos;t find your answer?{" "}
+            <a href="#contact" className="text-white hover:underline font-bold">
               Just ask us directly →
             </a>
           </p>
@@ -132,12 +150,12 @@ export default function FAQ() {
           {/* Document top stamp */}
           <div className="flex items-center justify-between py-4 mb-2 border-b border-white/[0.04]">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500/40" />
+              <div className="w-2 h-2 rounded-full bg-white/40" />
               <span className="text-[10px] font-black tracking-[0.3em] text-white/15 uppercase">
                 File: VD-FAQ-001
               </span>
             </div>
-            <span className="text-[10px] font-bold tracking-widest text-emerald-500/30 uppercase">Declassified</span>
+            <span className="text-[10px] font-bold tracking-widest text-white/30 uppercase">Declassified</span>
           </div>
 
           {faqs.map((faq, i) => (
@@ -145,6 +163,6 @@ export default function FAQ() {
           ))}
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

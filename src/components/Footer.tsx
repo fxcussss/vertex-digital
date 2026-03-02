@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { Zap, Mail, MapPin, Phone, Twitter, Linkedin, Instagram, Github } from "lucide-react";
 import Link from "next/link";
 

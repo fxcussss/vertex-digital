@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback } from "react";
-import { motion, useInView, useMotionValue, useSpring, Variants } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform, Variants } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 
 const testimonials = [
@@ -93,28 +93,28 @@ function TestimonialCard({ t, index }: { t: typeof testimonials[0]; index: numbe
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: "1000px" }}
-      className="group glass rounded-3xl p-7 flex flex-col gap-5 relative overflow-hidden border border-white/[0.05] hover:border-emerald-500/20 transition-colors duration-500"
+      className="group glass rounded-3xl p-7 flex flex-col gap-5 relative overflow-hidden border border-white/[0.05] hover:border-white/20 transition-colors duration-500"
     >
       {/* Spotlight effect */}
-      <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-radial-[at_50%_0%] from-emerald-500/[0.08] to-transparent pointer-events-none" />
+      <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-radial-[at_50%_0%] from-white/[0.08] to-transparent pointer-events-none" />
 
-      <Quote className="absolute top-5 right-5 w-8 h-8 text-emerald-500/10 group-hover:text-emerald-500/25 transition-colors duration-300" />
+      <Quote className="absolute top-5 right-5 w-8 h-8 text-white/10 group-hover:text-white/25 transition-colors duration-300" />
 
       {/* Stars */}
       <div className="flex gap-1">
         {[...Array(t.rating)].map((_, i) => (
-          <Star key={i} className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
+          <Star key={i} className="w-3.5 h-3.5 text-white/60 fill-white/60" />
         ))}
       </div>
 
       {/* Text */}
       <p className="text-sm text-white/55 leading-relaxed flex-1 group-hover:text-white/70 transition-colors duration-300">
-        "{t.text}"
+        &quot;{t.text}&quot;
       </p>
 
       {/* Author */}
       <div className="flex items-center gap-3 pt-2 border-t border-white/[0.05]">
-        <div className="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-xs font-bold text-emerald-400 flex-shrink-0 group-hover:bg-emerald-500/30 transition-colors">
+        <div className="w-9 h-9 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-xs font-bold text-white flex-shrink-0 group-hover:bg-white/30 transition-colors">
           {t.avatar}
         </div>
         <div>
@@ -130,8 +130,27 @@ export default function Testimonials() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
+  // 3D Scroll Warp
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const opacity = useTransform(scrollYProgress, [0.65, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0.65, 1], [1, 0.8]);
+  const rotateX = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, 30]), { stiffness: 60, damping: 20 });
+  const z = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, -400]), { stiffness: 60, damping: 20 });
+
   return (
-    <section id="testimonials" ref={ref} className="relative z-10 py-32 px-4">
+    <motion.section
+      id="testimonials"
+      ref={ref}
+      className="relative z-10 py-32 px-4 overflow-hidden"
+      style={{
+        opacity,
+        scale,
+        rotateX,
+        z,
+        transformPerspective: 1200,
+        transformStyle: "preserve-3d"
+      }}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -140,16 +159,16 @@ export default function Testimonials() {
           animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ The Legends ◆</p>
+          <p className="text-white/60 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ The Legends ◆</p>
           <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-5">
             Trusted by <span className="text-emerald-glow">ambitious teams</span>
           </h2>
           <p className="text-white/40 text-lg max-w-xl mx-auto">
-            Don't take our word for it. Here's what our clients say after working with us.
+            Don&apos;t take our word for it. Here&apos;s what our clients say after working with us.
           </p>
           <div className="flex items-center justify-center gap-1 mt-6">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-5 h-5 text-emerald-400 fill-emerald-400" />
+              <Star key={i} className="w-5 h-5 text-white/60 fill-white/60" />
             ))}
             <span className="ml-2 text-sm text-white/35 font-medium">5.0 · 120+ reviews</span>
           </div>
@@ -167,6 +186,6 @@ export default function Testimonials() {
           ))}
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

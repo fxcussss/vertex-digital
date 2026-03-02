@@ -1,12 +1,11 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import {
   motion,
   useScroll,
   useTransform,
   useSpring,
-  Variants,
 } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";

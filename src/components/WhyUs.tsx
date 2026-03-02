@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useScroll, useTransform, Variants } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, useSpring, Variants } from "framer-motion";
 import { CheckCircle2, Clock, HeartHandshake, Rocket, MessageSquare, Figma, Code2, Zap } from "lucide-react";
 
 const pillars = [
@@ -71,8 +71,27 @@ export default function WhyUs() {
   const { scrollYProgress: lineProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
   const lineWidth = useTransform(lineProgress, [0.1, 0.9], ["0%", "100%"]);
 
+  // 3D Scroll Warp
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const opacity = useTransform(scrollYProgress, [0.65, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0.65, 1], [1, 0.8]);
+  const rotateX = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, 30]), { stiffness: 60, damping: 20 });
+  const z = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, -400]), { stiffness: 60, damping: 20 });
+
   return (
-    <section id="why-us" ref={ref} className="relative z-10 py-32 px-4">
+    <motion.section
+      id="why-us"
+      ref={ref}
+      className="relative z-10 py-32 px-4 overflow-hidden"
+      style={{
+        opacity,
+        scale,
+        rotateX,
+        z,
+        transformPerspective: 1200,
+        transformStyle: "preserve-3d"
+      }}
+    >
       <div className="max-w-7xl mx-auto space-y-32">
 
         {/* ── Why Vertex ── */}
@@ -83,7 +102,7 @@ export default function WhyUs() {
             animate={isInView ? "visible" : "hidden"}
             variants={leftVariants}
           >
-            <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ Why We Win ◆</p>
+            <p className="text-white/60 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ Why We Win ◆</p>
             <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-6 leading-tight">
               An agency that treats your{" "}
               <span className="text-emerald-glow">business like its own</span>
@@ -92,8 +111,8 @@ export default function WhyUs() {
               We're a boutique team of designers, engineers, and strategists. Small enough to care deeply —
               experienced enough to deliver world-class work on a global scale.
             </p>
-            <div className="inline-flex items-baseline gap-3 glass-strong rounded-2xl px-8 py-5 border border-emerald-500/20">
-              <span className="text-5xl font-black text-emerald-400 tracking-tighter">3×</span>
+            <div className="inline-flex items-baseline gap-3 glass-strong rounded-2xl px-8 py-5 border border-white/20">
+              <span className="text-5xl font-black text-white tracking-tighter">3×</span>
               <span className="text-white/50 text-sm leading-snug max-w-[200px]">
                 average ROI increase for clients in their first year with us
               </span>
@@ -118,10 +137,10 @@ export default function WhyUs() {
                   key={pillar.title}
                   variants={v}
                   whileHover={{ x: 6, transition: { duration: 0.2 } }}
-                  className="group flex gap-4 glass rounded-2xl p-5 border border-white/[0.05] hover:border-emerald-500/20 transition-colors duration-300"
+                  className="group flex gap-4 glass rounded-2xl p-5 border border-white/[0.05] hover:border-white/20 transition-colors duration-300"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-300">
-                    <Icon className="w-4 h-4 text-emerald-400" />
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
+                    <Icon className="w-4 h-4 text-white" />
                   </div>
                   <div>
                     <h3 className="font-bold text-white mb-1 tracking-tight text-sm">{pillar.title}</h3>
@@ -141,7 +160,7 @@ export default function WhyUs() {
             animate={processInView ? "visible" : "hidden"}
             variants={fadeUp}
           >
-            <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ The Process ◆</p>
+            <p className="text-white/60 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ The Process ◆</p>
             <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-4">
               From brief to{" "}
               <span className="text-emerald-glow">live in weeks</span>
@@ -154,7 +173,7 @@ export default function WhyUs() {
           {/* Timeline connecting line */}
           <div ref={scrollRef} className="relative">
             <div className="hidden lg:block absolute top-10 left-[12.5%] right-[12.5%] h-px bg-white/[0.05]">
-              <motion.div className="h-full bg-gradient-to-r from-emerald-500/60 to-emerald-400/30" style={{ width: lineWidth }} />
+              <motion.div className="h-full bg-gradient-to-r from-white/60 to-white/10" style={{ width: lineWidth }} />
             </div>
 
             <motion.div
@@ -170,11 +189,11 @@ export default function WhyUs() {
                     key={step.step}
                     variants={fadeUp}
                     whileHover={{ y: -8, transition: { duration: 0.25 } }}
-                    className="relative glass rounded-3xl p-7 flex flex-col gap-4 group hover:border-emerald-500/25 border border-white/[0.04] transition-colors duration-300"
+                    className="relative glass rounded-3xl p-7 flex flex-col gap-4 group hover:border-white/25 border border-white/[0.04] transition-colors duration-300"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/25 group-hover:scale-110 transition-all duration-300">
-                        <Icon className="w-4 h-4 text-emerald-400" />
+                      <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/25 group-hover:scale-110 transition-all duration-300">
+                        <Icon className="w-4 h-4 text-white" />
                       </div>
                       <span className="text-xs font-black text-white/10 tracking-widest">{step.step}</span>
                     </div>
@@ -183,8 +202,8 @@ export default function WhyUs() {
                       <p className="text-xs text-white/35 leading-relaxed">{step.desc}</p>
                     </div>
                     {/* Step number dot for timeline */}
-                    <div className="hidden lg:flex absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-emerald-500/30 border border-emerald-500/50 items-center justify-center">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:animate-pulse" />
+                    <div className="hidden lg:flex absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white/30 border border-white/50 items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-white group-hover:animate-pulse" />
                     </div>
                   </motion.div>
                 );
@@ -193,6 +212,6 @@ export default function WhyUs() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

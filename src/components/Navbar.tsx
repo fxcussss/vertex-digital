@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, useScroll, AnimatePresence } from "framer-motion";
 import { Zap, Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -11,14 +11,7 @@ const navLinks = [
   { href: "#contact", label: "Contact", chapter: "VII" },
 ];
 
-const chapters = [
-  { id: "", label: "Prologue", offset: 0 },
-  { id: "services", label: "The Arsenal", offset: 0 },
-  { id: "why-us", label: "Why We Win", offset: 0 },
-  { id: "testimonials", label: "The Legends", offset: 0 },
-  { id: "pricing", label: "The Mission", offset: 0 },
-  { id: "contact", label: "Begin", offset: 0 },
-];
+
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -88,11 +81,15 @@ export default function Navbar() {
         >
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center group-hover:bg-emerald-500/30 transition-colors">
-              <Zap className="w-4 h-4 text-emerald-400" fill="currentColor" />
-            </div>
+            <motion.div
+              whileHover={{ rotate: 180, scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 10 }}
+              className="w-8 h-8 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center group-hover:bg-white/30 transition-colors"
+            >
+              <Zap className="w-4 h-4 text-white" fill="currentColor" />
+            </motion.div>
             <span className="font-extrabold tracking-tight text-white text-lg">
-              Vertex<span className="text-emerald-400">.</span>
+              Vertex<span className="text-white/50">.</span>
             </span>
           </Link>
 
@@ -106,7 +103,7 @@ export default function Navbar() {
               transition={{ duration: 0.3 }}
               className="hidden md:flex items-center gap-2"
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               <span className="text-[11px] font-bold tracking-[0.2em] text-white/30 uppercase">
                 {currentChapter}
               </span>
@@ -116,24 +113,30 @@ export default function Navbar() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm text-white/50 hover:text-white transition-colors duration-200 font-medium"
-              >
-                {link.label}
-              </Link>
+              <motion.div key={link.href} whileHover={{ y: -2, scale: 1.05 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                <Link
+                  href={link.href}
+                  className="text-sm text-white/50 hover:text-white transition-colors duration-200 font-medium"
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
           </nav>
 
           {/* CTA + Mobile toggle */}
           <div className="flex items-center gap-3">
-            <Link
-              href="#contact"
-              className="hidden md:inline-flex text-sm font-bold px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black transition-all duration-200 hover:shadow-[0_0_24px_rgba(16,185,129,0.5)] hover:-translate-y-px"
+            <motion.div
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
-              Get a Quote
-            </Link>
+              <Link
+                href="#contact"
+                className="hidden md:inline-flex text-sm font-bold px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black transition-all duration-200 hover:shadow-[0_0_24px_rgba(255,255,255,0.4)] hover:-translate-y-px"
+              >
+                Get a Quote
+              </Link>
+            </motion.div>
             <button
               onClick={() => setMobileOpen((o) => !o)}
               className="md:hidden w-9 h-9 rounded-xl glass flex items-center justify-center text-white/70 hover:text-white transition-colors"
@@ -145,9 +148,9 @@ export default function Navbar() {
         </div>
 
         {/* Scroll progress bar */}
-        <div className="mx-auto max-w-7xl mt-1 h-[2px] rounded-full">
+        <div className="mx-auto max-w-7xl mt-1 h-[2px] rounded-full bg-white/5">
           <motion.div
-            className="h-full rounded-full progress-shimmer"
+            className="h-full rounded-full bg-gradient-to-r from-white/40 via-white to-white/40"
             style={{ width: `${progress}%` }}
             transition={{ duration: 0.1 }}
           />
@@ -171,7 +174,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-base font-semibold text-white/70 hover:text-emerald-400 transition-colors py-1"
+                className="text-base font-semibold text-white/70 hover:text-white transition-colors py-1"
               >
                 {link.label}
               </Link>
@@ -179,7 +182,7 @@ export default function Navbar() {
             <Link
               href="#contact"
               onClick={() => setMobileOpen(false)}
-              className="mt-2 text-center text-sm font-bold px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black transition-all"
+              className="mt-2 text-center text-sm font-bold px-5 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black transition-all"
             >
               Get a Quote →
             </Link>

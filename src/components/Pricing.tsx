@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, Variants } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, useSpring, Variants } from "framer-motion";
 import { Check, Zap, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -93,8 +93,27 @@ export default function Pricing() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
+  // 3D Scroll Warp
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const opacity = useTransform(scrollYProgress, [0.65, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0.65, 1], [1, 0.8]);
+  const rotateX = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, 30]), { stiffness: 60, damping: 20 });
+  const z = useSpring(useTransform(scrollYProgress, [0.65, 1], [0, -400]), { stiffness: 60, damping: 20 });
+
   return (
-    <section id="pricing" ref={ref} className="relative z-10 py-32 px-4">
+    <motion.section
+      id="pricing"
+      ref={ref}
+      className="relative z-10 py-32 px-4 overflow-hidden"
+      style={{
+        opacity,
+        scale,
+        rotateX,
+        z,
+        transformPerspective: 1200,
+        transformStyle: "preserve-3d"
+      }}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -103,13 +122,13 @@ export default function Pricing() {
           animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ Choose Your Mission ◆</p>
+          <p className="text-white/60 text-xs font-black uppercase tracking-[0.4em] mb-4">◆ Choose Your Mission ◆</p>
           <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-5">
             Transparent pricing,{" "}
             <span className="text-emerald-glow">zero surprises</span>
           </h2>
           <p className="text-white/40 text-lg max-w-xl mx-auto">
-            Every project is unique. These are starting points — we'll tailor a proposal
+            Every project is unique. These are starting points — we&apos;ll tailor a proposal
             to your exact needs and budget.
           </p>
         </motion.div>
@@ -125,18 +144,18 @@ export default function Pricing() {
               animate={isInView ? "visible" : "hidden"}
               whileHover={{ y: -10, transition: { duration: 0.25 } }}
               className={`relative rounded-3xl p-8 flex flex-col gap-6 overflow-hidden ${plan.highlight
-                  ? "bg-emerald-500/[0.07] border border-emerald-500/35 shadow-[0_0_80px_rgba(16,185,129,0.15)]"
-                  : "glass border border-white/[0.05]"
+                ? "bg-white/[0.07] border border-white/35 shadow-[0_0_80px_rgba(255,255,255,0.15)]"
+                : "glass border border-white/[0.05]"
                 }`}
             >
               {/* Animated top glow for highlighted */}
               {plan.highlight && (
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
               )}
 
               {/* Tag */}
               {plan.tag && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-xs font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.5)]">
                   {plan.tag}
                 </div>
               )}
@@ -150,8 +169,8 @@ export default function Pricing() {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   {plan.highlight && (
-                    <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                      <Zap className="w-3 h-3 text-emerald-400" fill="currentColor" />
+                    <div className="w-6 h-6 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center">
+                      <Zap className="w-3 h-3 text-white" fill="currentColor" />
                     </div>
                   )}
                   <p className="text-sm font-bold text-white/50 uppercase tracking-widest">{plan.name}</p>
@@ -178,7 +197,7 @@ export default function Pricing() {
                     animate={isInView ? "visible" : "hidden"}
                     className="flex items-start gap-2.5 text-sm text-white/55"
                   >
-                    <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <Check className="w-4 h-4 text-white/50 flex-shrink-0 mt-0.5" />
                     {f}
                   </motion.li>
                 ))}
@@ -188,8 +207,8 @@ export default function Pricing() {
               <Link
                 href="#contact"
                 className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 group ${plan.highlight
-                    ? "bg-emerald-500 hover:bg-emerald-400 text-black hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
-                    : "glass border border-white/[0.08] text-white/60 hover:text-white hover:border-emerald-500/30"
+                  ? "bg-white hover:bg-zinc-200 text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]"
+                  : "glass border border-white/[0.08] text-white/60 hover:text-white hover:border-white/30"
                   }`}
               >
                 {plan.cta}
@@ -207,11 +226,11 @@ export default function Pricing() {
           transition={{ delay: 0.8 }}
         >
           All prices in USD. Payment plans available. Not sure which fits?{" "}
-          <Link href="#contact" className="text-emerald-400 hover:underline">
-            Let's talk →
+          <Link href="#contact" className="text-white hover:underline font-bold">
+            Let&apos;s talk →
           </Link>
         </motion.p>
       </div>
-    </section>
+    </motion.section>
   );
 }

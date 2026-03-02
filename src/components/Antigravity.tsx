@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/purity */
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 const AntigravityInner = ({
@@ -28,6 +31,17 @@ const AntigravityInner = ({
     const lastMousePos = useRef({ x: 0, y: 0 });
     const lastMouseMoveTime = useRef(0);
     const virtualMouse = useRef({ x: 0, y: 0 });
+
+    // Track mouse globally since canvas has pointer-events: none
+    const globalMouse = useRef({ x: 0, y: 0 });
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            globalMouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+            globalMouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        };
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, []);
 
     const particles = useMemo(() => {
         const temp = [];
@@ -74,7 +88,8 @@ const AntigravityInner = ({
         const mesh = meshRef.current;
         if (!mesh) return;
 
-        const { viewport: v, pointer: m } = state;
+        const { viewport: v } = state;
+        const m = globalMouse.current;
 
         const mouseDist = Math.sqrt(Math.pow(m.x - lastMousePos.current.x, 2) + Math.pow(m.y - lastMousePos.current.y, 2));
 
@@ -160,11 +175,11 @@ const AntigravityInner = ({
 
     return (
         <instancedMesh ref={meshRef} args={[undefined, undefined, count] as any}>
-            {particleShape === 'capsule' && <capsuleGeometry args={[0.05, 0.2, 4, 8]} />}
-            {particleShape === 'sphere' && <sphereGeometry args={[0.1, 16, 16]} />}
-            {particleShape === 'box' && <boxGeometry args={[0.15, 0.15, 0.15]} />}
-            {particleShape === 'tetrahedron' && <tetrahedronGeometry args={[0.15]} />}
-            <meshBasicMaterial color={color} transparent={true} opacity={0.6} />
+            {particleShape === 'capsule' && <capsuleGeometry args={[0.08, 0.4, 4, 8]} />}
+            {particleShape === 'sphere' && <sphereGeometry args={[0.15, 16, 16]} />}
+            {particleShape === 'box' && <boxGeometry args={[0.2, 0.2, 0.2]} />}
+            {particleShape === 'tetrahedron' && <tetrahedronGeometry args={[0.2]} />}
+            <meshBasicMaterial color={color} transparent={true} opacity={0.65} />
         </instancedMesh>
     );
 };
