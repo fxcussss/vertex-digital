@@ -20,6 +20,9 @@
 # production
 /build
 
+# Submissions data (local only — use a DB in production)
+/data/submissions.json
+
 # misc
 .DS_Store
 *.pem

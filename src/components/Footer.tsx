@@ -138,6 +138,13 @@ export default function Footer() {
             >
               vertex-digital-sooty.vercel.app
             </a>
+            <span className="text-white/10">·</span>
+            <a
+              href="/admin"
+              className="text-xs text-white/20 hover:text-emerald-400 transition-colors"
+            >
+              Admin ↗
+            </a>
           </div>
         </div>
       </div>
