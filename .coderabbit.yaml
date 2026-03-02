@@ -1,0 +1,50 @@
+# CodeRabbit configuration for Vertex Digital
+# Docs: https://docs.coderabbit.ai/getting-started/configure-coderabbit
+
+language: "en-US"
+
+reviews:
+  profile: "assertive"          # strict, opinionated reviews
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+
+  path_filters:
+    - "!**/*.lock"
+    - "!**/node_modules/**"
+    - "!**/.next/**"
+    - "!**/public/**"
+
+  path_instructions:
+    - path: "src/components/**"
+      instructions: |
+        - All client components must have "use client" at the top.
+        - Framer Motion variants must be defined OUTSIDE the component function.
+        - No inline styles unless using CSS custom properties or dynamic values.
+        - All glassmorphism cards must use: bg-white/[0.03] backdrop-blur-xl border border-white/[0.08].
+        - Colours must strictly follow the design tokens in AGENTS.md.
+
+    - path: "src/app/actions/**"
+      instructions: |
+        - All server actions must have "use server" at the top.
+        - All user input must be validated with Zod before any processing.
+        - Never expose internal error messages to the client response.
+        - Mauritius phone numbers must use regex: /^\+230\s?\d{3}\s?\d{4}$/
+
+    - path: "src/app/**"
+      instructions: |
+        - layout.tsx must export a `viewport` object (not inside metadata).
+        - All pages must be performant: no unnecessary client components.
+        - metadata must include title, description, openGraph, and canonical URL.
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "develop"
+
+chat:
+  auto_reply: true
